@@ -1,0 +1,84 @@
+﻿@using PagedList.Mvc
+@model MotorMax.Web.ViewModels.Proveedor.ProveedorListSortVm
+
+@{
+    ViewBag.Title = "Index";
+}
+<div class="d-flex justify-content-between">
+    <h2>Lista de Proveedores</h2>
+
+    <p>
+        @Html.ActionLink("Nuevo", "Create", null, new { @class = "btn btn-primary" })
+    </p>
+
+</div>
+@using (Html.BeginForm("Index", "Proveedores", FormMethod.Get))
+{
+    <div class="row">
+        <div class="col-auto">
+            <label>Ordenar:</label>
+        </div>
+        <div class="col-auto">
+            @Html.DropDownListFor(model => Model.SortBy, new SelectList(Model.Sorts, "Value", "Key"), "Seleccione Orden", new { @class = "form-select" })
+        </div>
+        <div class="col-auto">
+            <input type="text" placeholder="Buscar...." name="SearchBy" class="form-control" />
+        </div>
+        <div class="col-auto">
+            <input type="submit" name="SortBy" value="Aplicar" class="btn btn-secondary" />
+        </div>
+    </div>
+
+}
+
+<table class="table table-bordered table-hover mt-3">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Proveedores.FirstOrDefault().NombreProveedor)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Proveedores.FirstOrDefault().Ciudad)
+        </th>
+        
+        <th>Acciones</th>
+    </tr>
+
+    @foreach (var item in Model.Proveedores)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NombreProveedor)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Ciudad)
+            </td>
+            <td>
+                <a class="btn btn-sm btn-warning" href="@Url.Action("Edit","Proveedores",new {id=item.ProveedorId})">
+                    <i class="fa fa-edit"></i>
+                    Editar
+                </a>
+                <a class="btn btn-sm btn-info" href="@Url.Action("Details","Proveedores",new {id=item.ProveedorId})">
+                    <i class="fa fa-list"></i>
+                    Detalles
+                </a>
+
+                <a class="btn btn-sm btn-danger" href="@Url.Action("Delete","Proveedores", new {id=item.ProveedorId})">
+                    <i class="fa fa-trash"></i>
+                    Borrar
+                </a>
+            </td>
+        </tr>
+    }
+
+</table>
+Página: @(Model.Proveedores.PageCount < Model.Proveedores.PageNumber ? 0 : Model.Proveedores.PageNumber) de: @Model.Proveedores.PageCount
+@Html.PagedListPager(Model.Proveedores, page => Url.Action("Index", new
+{
+    page,
+    pageSize = ViewBag.PageSize,
+    SortBy = Model.SortBy,
+    SearchBy = Model.SearchBy
+}))
+
+

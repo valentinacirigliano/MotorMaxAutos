@@ -1,0 +1,123 @@
+﻿@using PagedList.Mvc
+@model MotorMax.Web.ViewModels.Repuesto.RepuestoFiltroVm
+
+@{
+    ViewBag.Title = "Index";
+}
+<div class="d-flex justify-content-between">
+    <h2>Listado de Repuestos</h2>
+    @if (User.IsInRole("Admin"))
+    {
+        <p>
+            @Html.ActionLink("Nuevo", "Create", null, new { @class = "btn btn-primary" })
+        </p>
+
+    }
+
+</div>
+@using (Html.BeginForm("Index", "Repuestos", FormMethod.Get))
+{
+    <div class="row">
+        <div class="col-auto">
+            <label>Categorías:</label>
+        </div>
+        <div class="col-auto">
+            @Html.DropDownListFor(model => model.CategoriaFiltro, Model.Categorias, "Ver Todos", new { @class = "form-select" })
+        </div>
+        <div class="col-auto">
+            <input type="text" placeholder="Buscar...." name="SearchBy" class="form-control" />
+        </div>
+        <div class="col-auto">
+            <input type="submit" value="Filtrar" class="btn btn-secondary" />
+        </div>
+    </div>
+}
+
+<table class="table table-bordered table-hover mt-3">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Repuestos[0].Imagen)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Repuestos[0].Descripcion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Repuestos[0].Categoria)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Repuestos[0].PrecioUnitario)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Repuestos[0].UnidadesDisponibles)
+        </th>
+        
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Repuestos)
+    {
+        <tr>
+            <td>
+                @if (item.Imagen != null)
+                {
+                    
+                    <img src="@Url.Content(MotorMax.Utilidades.WC.ProductosImagenesFolder+item.Imagen)" style="width:50px; height:50px" />
+                }
+                else
+                {
+                    
+                    <img src="@Url.Content(MotorMax.Utilidades.WC.SinImagenDisponible)" style="width:50px; height:50px" />
+
+                }
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Categoria)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PrecioUnitario)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnidadesDisponibles)
+            </td>
+           
+            <td>
+                @if (User.IsInRole("Admin"))
+                {
+                    @Html.ActionLink("Editar", "Edit", new { id = item.RepuestoId }, new { @class = "btn btn-warning" })
+                    @Html.ActionLink("Borrar", "Delete", new { id = item.RepuestoId }, new { @class = "btn btn-danger" })
+                    @Html.ActionLink("Proveedores", "ProveedoresDelRepuesto", new { id = item.RepuestoId }, new { @class = "btn btn-primary" })
+                }
+                @if (User.IsInRole("Comprador"))
+                {
+                    using (Html.BeginForm("AddToCart", "Carrito", FormMethod.Post))
+                    {
+                        @Html.ActionLink("Detalles", "Details", new { id = item.RepuestoId }, new { @class = "btn btn-info" })
+
+                        @Html.Hidden("repuestoId", item.RepuestoId)
+                        @Html.Hidden("returnUrl", Request.Url.PathAndQuery)
+                        <button type="submit" class="btn btn-outline-danger">
+                            Comprar
+                        </button>
+
+                    }
+
+
+                }
+
+            </td>
+        </tr>
+    }
+
+</table>
+    Página: @(Model.Repuestos.PageCount < Model.Repuestos.PageNumber ? 0 : Model.Repuestos.PageNumber) de: @Model.Repuestos.PageCount
+    @Html.PagedListPager(Model.Repuestos, page => Url.Action("Index", new
+    {
+        CategoriaFiltro = Model.CategoriaFiltro,
+        page,
+        pageSize = ViewBag.PageSize
+    }))

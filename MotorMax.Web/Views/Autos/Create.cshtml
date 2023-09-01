@@ -1,0 +1,30 @@
+﻿@model MotorMax.Web.ViewModels.Auto.AutoEditVm
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Nuevo Auto</h2>
+
+@using (Html.BeginForm("Create", "Autos", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.Partial("_MostrarAuto", Model)
+
+
+
+
+        <div class="form-group mt-3">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Guardar" class="btn btn-primary" />
+                @Html.ActionLink("Volver", "Index", null, new { @class = "btn btn-success" })
+            </div>
+        </div>
+    </div>
+}
+
+

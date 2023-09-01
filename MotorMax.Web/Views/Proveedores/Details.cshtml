@@ -1,0 +1,68 @@
+﻿@model MotorMax.Web.ViewModels.Proveedor.ProveedorDetailVm
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Detalles del Proveedor</h2>
+
+<div>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.DisplayNameFor(model => model.Proveedor.NombreProveedor)
+                @Html.TextBoxFor(model => model.Proveedor.NombreProveedor, new { @class = "form-control", @disabled = "disabled" })
+
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.DisplayNameFor(model => model.Proveedor.CantidadRepuestos)
+                @Html.TextBoxFor(model => model.Proveedor.CantidadRepuestos, new { @class = "form-control", @disabled = "disabled" })
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<p class="mt-3">
+    @Html.ActionLink("Agregar Repuesto", "AddRepuesto", new { proveedorId = Model.Proveedor.ProveedorId }, new { @class = "btn btn-primary" })
+
+    @Html.ActionLink("Volver", "Index", null, new { @class = "btn btn-success" })
+</p>
+<hr />
+
+<table class="table table-bordered table-hover w-75">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Repuestos.FirstOrDefault().Descripcion)
+        </th>
+        <th class="w-25">Acciones</th>
+    </tr>
+    @if (Model.Repuestos.Any())
+    {
+        foreach (var item in Model.Repuestos)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Descripcion)
+                </td>
+                <td>
+                    @Html.ActionLink("Quitar", "DeleteRepuesto", new { id = item.RepuestoId }, new { @class = "btn btn-sm btn-danger" })
+                </td>
+            </tr>
+        }
+
+    }
+    else
+    {
+        <tr>
+            <td colspan="2" style="text-align:center" class="text-danger"><strong>No se han agregado repuestos todavía</strong></td>
+
+        </tr>
+    }
+
+</table>

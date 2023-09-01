@@ -1,0 +1,115 @@
+﻿
+@using PagedList.Mvc
+@model MotorMax.Web.ViewModels.Auto.AutoFiltroVm
+
+@{
+    ViewBag.Title = "Index";
+}
+<div class="d-flex justify-content-between">
+    <h2>Listado de Autos</h2>
+    @if (User.IsInRole("Admin"))
+    {
+        <p>
+            @Html.ActionLink("Nuevo", "Create", null, new { @class = "btn btn-primary" })
+        </p>
+
+    }
+
+</div>
+@using (Html.BeginForm("Index", "Autos", FormMethod.Get))
+{
+    <div class="row">
+        <div class="col-auto">
+            <label>Marca:</label>
+        </div>
+        <div class="col-auto">
+            @Html.DropDownListFor(model => model.MarcaFiltro, Model.Marcas, "Ver Todos", new { @class = "form-select" })
+        </div>
+        <div class="col-auto">
+            <input type="submit" value="Filtrar" class="btn btn-secondary" />
+        </div>
+    </div>
+}
+
+<table class="table table-bordered table-hover">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Autos[0].Patente)
+        </th>                                   
+        <th>                                    
+            @Html.DisplayNameFor(model => model.Autos[0].Marca)
+        </th>                                   
+        <th>                                    
+            @Html.DisplayNameFor(model => model.Autos[0].Modelo)
+        </th>                                   
+        <th>                                    
+            @Html.DisplayNameFor(model => model.Autos[0].PrecioFinal)
+        </th>                                   
+        <th>                                    
+            @Html.DisplayNameFor(model => model.Autos[0].UnidadesDisponibles)
+        </th>                                   
+        <th>                                    
+            @Html.DisplayNameFor(model => model.Autos[0].Suspendido)
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Autos)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Patente)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Marca)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Modelo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PrecioFinal)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UnidadesDisponibles)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Suspendido)
+            </td>
+            <td>
+                @if (User.IsInRole("Admin"))
+                {
+                    @Html.ActionLink("Editar", "Edit", new { id = item.AutoId }, new { @class = "btn btn-warning" })
+                    @Html.ActionLink("Detalles", "Details", new { id = item.AutoId }, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Borrar", "Delete", new { id = item.AutoId }, new { @class = "btn btn-danger" })
+                }
+                @if (User.IsInRole("Comprador"))
+                {
+                    using (Html.BeginForm("AddToCart", "Carrito", FormMethod.Post))
+                    {
+                        @Html.ActionLink("Detalles", "Details", new { id = item.AutoId }, new { @class = "btn btn-info" })
+
+                        @*@Html.ActionLink("Comprar", "#", new { id = item.ProductoId }, new { @class = "btn btn-danger" })*@
+                        @Html.Hidden("autoId", item.AutoId)
+                        @Html.Hidden("returnUrl", Request.Url.PathAndQuery)
+                        <button type="submit" class="btn btn-outline-danger">
+                            Comprar
+                        </button>
+
+                    }
+
+
+                }
+
+            </td>
+        </tr>
+    }
+
+</table>
+    Página: @(Model.Autos.PageCount < Model.Autos.PageNumber ? 0 : Model.Autos.PageNumber) de: @Model.Autos.PageCount
+    @Html.PagedListPager(Model.Autos, page => Url.Action("Index", new
+    {
+        CategoriaFiltro = Model.MarcaFiltro,
+        page,
+        pageSize = ViewBag.PageSize
+    }))

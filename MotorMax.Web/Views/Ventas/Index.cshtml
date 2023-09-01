@@ -1,0 +1,143 @@
+﻿@using PagedList.Mvc;
+@model MotorMax.Web.ViewModels.Venta.VentaListSortVm
+
+@{
+    ViewBag.Title = "Index";
+}
+<div class="d-flex justify-content-between">
+    <h2>Ventas</h2>
+</div>
+
+@using (Html.BeginForm("Index", "Ventas", FormMethod.Get))
+{
+    <div class="row">
+        <div class="col-auto">
+            <label>Ordenar:</label>
+        </div>
+        <div class="col-auto">
+            @Html.DropDownListFor(model => Model.SortBy, new SelectList(Model.Sorts, "Value", "Key"), "Seleccione Orden", new { @class = "form-select" })
+        </div>
+        <div class="col-auto">
+            <input type="submit" name="SortBy" value="Aplicar" class="btn btn-secondary" />
+        </div>
+
+        <div class="col-auto">
+            <input type="text" placeholder="Buscar...." name="SearchBy" class="form-control" />
+        </div>
+
+    </div>
+
+}
+<table class="table table-bordered table-hover mt-3">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Ventas.FirstOrDefault().Fecha)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Ventas.FirstOrDefault().Cliente)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Ventas.FirstOrDefault().Monto)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Ventas.FirstOrDefault().Estado)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Ventas)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fecha)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cliente)
+            </td>
+            <td style="text-align:right">
+                @Html.DisplayFor(modelItem => item.Monto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Estado)
+            </td>
+            <td>
+                <a class="btn btn-info" href="@Url.Action("Details","Ventas",new {@id=item.VentaId})">
+                    <i class="fa fa-info"></i>
+                    Detalles
+                </a>
+                @if (item.Estado != MotorMax.Entidades.Enums.Estado.Impaga.ToString())
+                {
+                    @Html.ActionLink("Delete", "Delete", new { id = item.VentaId }, new { @class = "btn btn-danger" })
+
+                }
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+@*<table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.VentaId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaOperacion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cliente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Monto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Estado)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VentaId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Fecha)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cliente)
+                </td>
+                <td style="text-align:right">
+                    @Html.DisplayFor(modelItem => item.Monto)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Estado)
+                </td>
+                <td>
+                    <a class="btn btn-info" href="@Url.Action("Details","Ventas",new {@id=item.VentaId})">
+                        <i class="fa fa-info"></i>
+                        Detalles
+                    </a>
+                    @if (item.Estado != MotorMax.Entidades.Enums.Estado.Paga.ToString())
+                    {
+                        @Html.ActionLink("Delete", "Delete", new { id = item.VentaId }, new { @class = "btn btn-danger" })
+
+                    }
+                </td>
+            </tr>
+        }
+
+    </table>*@
+
+Página: @(Model.Ventas.PageCount < Model.Ventas.PageNumber ? 0 : Model.Ventas.PageNumber) de: @Model.Ventas.PageCount
+@Html.PagedListPager(Model.Ventas, page => Url.Action("Index", new
+{
+    page,
+    pageSize = ViewBag.PageSize,
+    SortBy = Model.SortBy,
+    SearchBy = Model.SearchBy
+}))
+
+

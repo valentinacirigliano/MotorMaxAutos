@@ -1,0 +1,68 @@
+﻿@model MotorMax.Web.ViewModels.Carrito.CheckOutVm
+@{
+    ViewBag.Title = "ConfirmOrder";
+}
+<form action="@Url.Action("ConfirmOrder","Carrito")" method="post" id="braintree-payment-form">
+    @Html.AntiForgeryToken()
+    <h2>Confirmar Order</h2>
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+<div class="row">
+
+    <div class="col-8">
+        <h3>Detalle de la Compra</h3>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Carrito.Items.FirstOrDefault().Repuesto)</th>
+                    <th>@Html.DisplayNameFor(model => model.Carrito.Items.FirstOrDefault().PrecioUnitario)</th>
+                    <th>@Html.DisplayNameFor(model => model.Carrito.Items.FirstOrDefault().Cantidad)</th>
+                    <th>@Html.DisplayNameFor(model => model.Carrito.Items.FirstOrDefault().PrecioTotal)</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Carrito.Items)
+                {
+                    <tr>
+                        <td>@item.Repuesto</td>
+                        <td style="text-align:right">@item.PrecioUnitario.ToString("N")</td>
+                        <td style="text-align:right">@item.Cantidad</td>
+                        <td style="text-align:right">@item.PrecioTotal.ToString("N")</td>
+                    </tr>
+                }
+                <tr>
+                    <td class="fw-bold">Totales:</td>
+
+                    <td colspan="2" class="fw-bold" style="text-align:right">@Model.Carrito.Items.Sum(i => i.Cantidad)</td>
+                    <td class="fw-bold" style="text-align:right">@Model.Carrito.Items.Sum(i => i.PrecioTotal).ToString("N")</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+    
+    @* //TODO:hacer una vista parcial del pago, como un create. para obtener los datos del pago *@
+    <div class="col-4">
+        <h3>Detalle del Pago</h3>
+        <div class="form-group">
+            <label>Tarjeta de Crédito</label>
+            <input type="text" size="16" autocomplete="off" name="CardNumber" />
+        </div>
+        <div class="form-group">
+            <label>CVV</label>
+            <input type="text" size="4" autocomplete="off" name="CVV" />
+
+        </div>
+        <div class="form-group">
+            <label>Expiration (MM/YYYY)</label>
+            <input type="text" size="2" name="Month" /> / <input type="text" size="4" name="Year" />
+
+        </div>
+        <input type="submit" class="btn btn-primary" value="Pagar" />
+    </div>
+</div>
+
+</form>
+
